@@ -1,4 +1,4 @@
-﻿namespace RegexEngine.Lexer;
+﻿namespace RegexEngine.Lexer.Lexemes;
 
 public static class LexemeTypeExtensions
 {

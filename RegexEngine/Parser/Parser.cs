@@ -1,6 +1,6 @@
 ﻿namespace RegexEngine.Parser;
 
-using RegexEngine.Lexer;
+using RegexEngine.Lexer.Lexemes;
 
 public class Parser(IReadOnlyList<Lexeme> lexerLexemes)
 {

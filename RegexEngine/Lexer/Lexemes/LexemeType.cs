@@ -1,4 +1,4 @@
-﻿namespace RegexEngine.Lexer;
+﻿namespace RegexEngine.Lexer.Lexemes;
 
 public enum LexemeType
 {
@@ -7,7 +7,6 @@ public enum LexemeType
     ZeroOrOneChars,
     ZeroOrMoreChars,
     AnyDigit,
-    RangeRepeatingChars,
     LeftCurlyBrace,
     RightCurlyBrace,
     Text,

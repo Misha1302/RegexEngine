@@ -1,5 +1,7 @@
 ﻿namespace RegexEngine.Lexer;
 
+using RegexEngine.Lexer.Lexemes;
+
 public class Lexer(string source)
 {
     private int _position;
@@ -12,36 +14,38 @@ public class Lexer(string source)
 
     public void Lex()
     {
-        while (_position < source.Length)
+        while (NotEnd)
         {
-            if (!TryAddBasicLexeme())
+            if (TryAddBasicLexeme())
                 continue;
 
-            var startPos = _position;
-            while (NotEnd && _lexemeTexts.All(x => !Slice.StartsWith(x.key)))
-                _position++;
-
-            var endPos = _position;
-
-            if (startPos == endPos)
-                throw new InvalidOperationException();
-
-            _lexemes.Add(new Lexeme(source[startPos..endPos], LexemeType.Text));
-
-            if (!NotEnd)
-                TryAddBasicLexeme();
+            AddComplexLexeme();
         }
+    }
+
+    private void AddComplexLexeme()
+    {
+        var startPos = _position;
+        while (NotEnd && _lexemeTexts.All(x => !Slice.StartsWith(x.key)))
+            _position++;
+
+        var endPos = _position;
+
+        if (startPos == endPos)
+            throw new InvalidOperationException();
+
+        _lexemes.Add(new Lexeme(source[startPos..endPos], LexemeType.Text));
     }
 
     private bool TryAddBasicLexeme()
     {
         var lexeme = GetBasicLexeme();
 
-        if (lexeme == default) return true;
+        if (lexeme == default) return false;
 
         _position += lexeme.key.Length;
         _lexemes.Add(new Lexeme(lexeme.key, lexeme.value));
-        return false;
+        return true;
     }
 
     private (string key, LexemeType value) GetBasicLexeme()

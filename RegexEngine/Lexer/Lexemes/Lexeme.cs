@@ -1,4 +1,4 @@
-﻿namespace RegexEngine.Lexer;
+﻿namespace RegexEngine.Lexer.Lexemes;
 
 public record Lexeme(string Text, LexemeType LexemeType)
 {
