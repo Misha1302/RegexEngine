@@ -8,12 +8,10 @@ public class Parser(IReadOnlyList<Lexeme> lexerLexemes)
     private int _index;
     public IReadOnlyList<Unit> Ast => _ast;
 
-    public void MakeAst()
+    public void MakeReversedAst()
     {
         for (_index = lexerLexemes.Count - 1; _index >= 0; _index--)
             _ast.Add(MakeUnit());
-
-        DeepReverse(_ast);
     }
 
     private static void DeepReverse(List<Unit> roots)
@@ -65,7 +63,7 @@ public class Parser(IReadOnlyList<Lexeme> lexerLexemes)
     {
         public override string ToString() =>
             Children.Count != 0
-                ? $"({string.Join(", ", Children)})"
+                ? $"{Lexeme} -> ({string.Join(", ", Children)})"
                 : Lexeme.ToString();
     }
 }

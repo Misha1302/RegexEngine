@@ -1,3 +1,5 @@
 ﻿using RegexEngine;
 
-_ = new Regex().DebugMatch("qwertyuiopoiuytrewq", @"qq(x(y(z(xyz\w\d)q)))f");
+const string source = "caccccaccbabbcb";
+var len = new Regex().DebugMatch(source, @"(c*c)*b*a*.*c*.a*a*a*").Len;
+Console.WriteLine(len == source.Length);

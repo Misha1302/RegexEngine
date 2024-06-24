@@ -9,9 +9,9 @@ public static class LexemesHelper
         LexemeTexts =
         [
             (".", LexemeType.AnyChar),
-            ("+", LexemeType.OneOrMoreChars),
-            ("?", LexemeType.ZeroOrOneChars),
-            ("*", LexemeType.ZeroOrMoreChars),
+            ("+", LexemeType.OneOrMoreTimes),
+            ("?", LexemeType.ZeroOrOneTimes),
+            ("*", LexemeType.ZeroOrMoreTimes),
             ("\\d", LexemeType.AnyDigit),
             ("\\w", LexemeType.AnyWordChar),
             ("{", LexemeType.LeftCurlyBrace),

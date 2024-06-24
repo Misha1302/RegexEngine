@@ -40,7 +40,7 @@ public class Regex
         ConsoleSeparate();
 
         var parser = new Parser.Parser(lexer2.Lexemes);
-        parser.MakeAst();
+        parser.MakeReversedAst();
         return parser;
     }
 

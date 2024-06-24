@@ -3,9 +3,9 @@
 public enum LexemeType
 {
     AnyChar,
-    OneOrMoreChars,
-    ZeroOrOneChars,
-    ZeroOrMoreChars,
+    OneOrMoreTimes,
+    ZeroOrOneTimes,
+    ZeroOrMoreTimes,
     AnyDigit,
     LeftCurlyBrace,
     RightCurlyBrace,

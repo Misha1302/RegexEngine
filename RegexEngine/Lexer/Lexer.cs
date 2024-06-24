@@ -27,14 +27,15 @@ public class Lexer(string source)
     {
         var startPos = _position;
         while (NotEnd && _lexemeTexts.All(x => !Slice.StartsWith(x.key)))
+        {
+            _lexemes.Add(new Lexeme(source[_position..(_position + 1)], LexemeType.Text));
             _position++;
+        }
 
         var endPos = _position;
 
         if (startPos == endPos)
             throw new InvalidOperationException();
-
-        _lexemes.Add(new Lexeme(source[startPos..endPos], LexemeType.Text));
     }
 
     private bool TryAddBasicLexeme()
