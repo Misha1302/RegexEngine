@@ -2,7 +2,7 @@
 
 public static class FastLinqs
 {
-    public static bool FastAll<T>(this IReadOnlyList<T> list, Func<T, bool> predicate, int startIndex = 0)
+    public static bool FastAll<T>(this List<T> list, Func<T, bool> predicate, int startIndex = 0)
     {
         for (var index = startIndex; index < list.Count; index++)
             if (!predicate(list[index]))
@@ -23,7 +23,7 @@ public static class FastLinqs
         return true;
     }
 
-    public static T? FastFirstOrDefault<T>(this IReadOnlyList<T> list, Func<T, bool> predicate)
+    public static T? FastFirstOrDefault<T>(this List<T> list, Func<T, bool> predicate)
     {
         for (var index = 0; index < list.Count; index++)
             if (predicate(list[index]))
