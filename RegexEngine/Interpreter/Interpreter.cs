@@ -1,6 +1,5 @@
 ﻿namespace RegexEngine.Interpreter;
 
-using RegexEngine.FastLinqs;
 using RegexEngine.Lexer;
 using RegexEngine.Lexer.Lexemes;
 using RegexEngine.Parser;
@@ -18,11 +17,8 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
 
     private Result InterpretNext(int astIndex, int index)
     {
-        if (index <= -1)
-            return new Result(index, ast.FastAll(x => x.Lexeme.LexemeType == LexemeType.ZeroOrMoreTimes, astIndex));
-
         if (astIndex >= ast.Count)
-            return new Result(index, false);
+            return new Result(index, index <= -1);
 
         var result = SingleInterpret(index, ast[astIndex], astIndex);
         if (result.EndOfInterpretation) return result;
@@ -57,6 +53,9 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
 
     private Result ZeroOrMoreTimes(int index, Parser.Unit unit, int astIndex)
     {
+        if (index <= -1)
+            return new Result(index, true);
+
         var maxRepeatCount = source.Length + 1;
         for (var repeatCount = maxRepeatCount - 1; repeatCount >= 0; repeatCount--)
         {
@@ -96,7 +95,7 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
     }
 
     private Result Char(int index, Parser.Unit unit) =>
-        new(index - 1, source[index] == unit.Lexeme.Text[0]);
+        new(index - 1, index >= 0 && source[index] == unit.Lexeme.Text[0]);
 
     private Result AnyChar(int index) =>
         new(index - 1, index >= 0);

@@ -1,18 +1,30 @@
 ﻿using System.Diagnostics;
 using RegexEngine;
 
-for (var i = 0; i < 5; i++)
+Measure();
+
+void StandardRun()
+{
+    Console.WriteLine(Main());
+}
+
+void Measure()
+{
+    // precompiling
     Console.WriteLine(Main());
 
 
-var sw = Stopwatch.StartNew();
-for (var i = 0; i < 100000; i++)
-    _ = Main();
-Console.WriteLine(sw.ElapsedMilliseconds);
+    var sw = Stopwatch.StartNew();
+    const int count = 100000;
+    for (var i = 0; i < count; i++)
+        _ = Main();
+    Console.WriteLine($"{sw.ElapsedMilliseconds} {(float)sw.ElapsedMilliseconds / count}");
+}
+
 
 bool Main()
 {
     const string s = "caccccaccbabbcb";
-    var len1 = new Regex().Match(s, @"(c*c)*b*a*.*c*.a*a*a*").Len;
-    return len1 == s.Length;
+    var len = new Regex().Match(s, @"(c*c)*b*a*.*c*.a*a*a*").Len;
+    return len == s.Length;
 }
