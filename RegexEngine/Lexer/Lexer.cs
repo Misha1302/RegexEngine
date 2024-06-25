@@ -1,5 +1,6 @@
 ﻿namespace RegexEngine.Lexer;
 
+using RegexEngine.FastLinqs;
 using RegexEngine.Lexer.Lexemes;
 
 public class Lexer(string source)
@@ -8,7 +9,6 @@ public class Lexer(string source)
     private readonly List<Lexeme> _lexemes = [];
     private readonly List<(string key, LexemeType value)> _lexemeTexts = LexemesHelper.LexemeTexts;
 
-    private string Slice => source[_position..];
     private bool NotEnd => _position < source.Length;
     public IReadOnlyList<Lexeme> Lexemes => _lexemes;
 
@@ -19,23 +19,23 @@ public class Lexer(string source)
             if (TryAddBasicLexeme())
                 continue;
 
-            AddComplexLexeme();
+            if (TryAddComplexLexeme())
+                continue;
+
+            Thrower.InvalidOpEx();
         }
     }
 
-    private void AddComplexLexeme()
+    private bool TryAddComplexLexeme()
     {
         var startPos = _position;
-        while (NotEnd && _lexemeTexts.All(x => !Slice.StartsWith(x.key)))
+        while (NotEnd && _lexemeTexts.FastAll(x => !source.FastStartsWith(x.key, _position)))
         {
             _lexemes.Add(new Lexeme(source[_position..(_position + 1)], LexemeType.Char));
             _position++;
         }
 
-        var endPos = _position;
-
-        if (startPos == endPos)
-            throw new InvalidOperationException();
+        return startPos != _position;
     }
 
     private bool TryAddBasicLexeme()
@@ -51,6 +51,6 @@ public class Lexer(string source)
 
     private (string key, LexemeType value) GetBasicLexeme()
     {
-        return _lexemeTexts.FirstOrDefault(x => Slice.StartsWith(x.key));
+        return _lexemeTexts.FastFirstOrDefault(x => source.FastStartsWith(x.key, _position));
     }
 }

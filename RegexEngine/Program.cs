@@ -6,7 +6,7 @@ for (var i = 0; i < 5; i++)
 
 
 var sw = Stopwatch.StartNew();
-for (var i = 0; i < 1000; i++)
+for (var i = 0; i < 100000; i++)
     _ = Main();
 Console.WriteLine(sw.ElapsedMilliseconds);
 

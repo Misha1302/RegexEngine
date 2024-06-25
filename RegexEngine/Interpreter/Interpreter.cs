@@ -1,5 +1,7 @@
 ﻿namespace RegexEngine.Interpreter;
 
+using RegexEngine.FastLinqs;
+using RegexEngine.Lexer;
 using RegexEngine.Lexer.Lexemes;
 using RegexEngine.Parser;
 
@@ -17,12 +19,7 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
     private Result InterpretNext(int astIndex, int index)
     {
         if (index <= -1)
-        {
-            var all = true;
-            for (var i = astIndex; i < ast.Count; i++)
-                all = all && ast[i].Lexeme.LexemeType == LexemeType.ZeroOrMoreTimes;
-            return new Result(index, all);
-        }
+            return new Result(index, ast.FastAll(x => x.Lexeme.LexemeType == LexemeType.ZeroOrMoreTimes, astIndex));
 
         if (astIndex >= ast.Count)
             return new Result(index, false);
@@ -42,7 +39,7 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
             LexemeType.ZeroOrMoreTimes => ZeroOrMoreTimes(index, unit, astIndex),
             LexemeType.Char => Char(index, unit),
             LexemeType.EndOfInnerScope => InnerScope(index, unit, astIndex),
-            _ => throw new ArgumentOutOfRangeException()
+            _ => Thrower.ArgOutOfRangeEx()
         };
     }
 
@@ -61,7 +58,7 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
     private Result ZeroOrMoreTimes(int index, Parser.Unit unit, int astIndex)
     {
         var maxRepeatCount = source.Length + 1;
-        for (var repeatCount = 0; repeatCount < maxRepeatCount; repeatCount++)
+        for (var repeatCount = maxRepeatCount - 1; repeatCount >= 0; repeatCount--)
         {
             var startIndex = index;
 
@@ -104,7 +101,7 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
     private Result AnyChar(int index) =>
         new(index - 1, index >= 0);
 
-    private readonly ref struct Result(int index, bool success, bool endOfInterpretation = false)
+    public readonly ref struct Result(int index, bool success, bool endOfInterpretation = false)
     {
         public readonly int Index = index;
         public readonly bool Success = success;
