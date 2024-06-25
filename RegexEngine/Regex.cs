@@ -6,12 +6,15 @@ public class Regex
 {
     public Match DebugMatch(string source, string pattern)
     {
+        ConsoleSeparate();
         var lexer = Lexer(pattern);
         Console.WriteLine(string.Join("\n", lexer.Lexemes.Select(x => x.ToFullString())));
 
+        ConsoleSeparate();
         var parser = Parser(lexer);
         Console.WriteLine(string.Join("; ", parser.Ast));
 
+        ConsoleSeparate();
         var match = Interpreter(source, parser);
         Console.WriteLine(match);
 
@@ -28,8 +31,6 @@ public class Regex
 
     private Lexer.Lexer Lexer(string source)
     {
-        ConsoleSeparate();
-
         var lexer = new Lexer.Lexer(source);
         lexer.Lex();
         return lexer;
@@ -37,8 +38,6 @@ public class Regex
 
     private Parser.Parser Parser(Lexer.Lexer lexer2)
     {
-        ConsoleSeparate();
-
         var parser = new Parser.Parser(lexer2.Lexemes);
         parser.MakeReversedAst();
         return parser;
@@ -46,8 +45,6 @@ public class Regex
 
     private Match Interpreter(string source, Parser.Parser parser)
     {
-        ConsoleSeparate();
-
         var interpreter = new Interpreter.Interpreter(source, parser.Ast);
         var match = interpreter.Interpret();
         return match;

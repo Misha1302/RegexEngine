@@ -25,10 +25,7 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
         }
 
         if (astIndex >= ast.Count)
-        {
-            Console.WriteLine(index);
-            return new Result(index, index <= -1);
-        }
+            return new Result(index, false);
 
         var result = SingleInterpret(index, ast[astIndex], astIndex);
         if (result.EndOfInterpretation) return result;
@@ -43,7 +40,7 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
         {
             LexemeType.AnyChar => AnyChar(index),
             LexemeType.ZeroOrMoreTimes => ZeroOrMoreTimes(index, unit, astIndex),
-            LexemeType.Text => Text(index, unit),
+            LexemeType.Char => Char(index, unit),
             LexemeType.EndOfInnerScope => InnerScope(index, unit, astIndex),
             _ => throw new ArgumentOutOfRangeException()
         };
@@ -63,15 +60,18 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
 
     private Result ZeroOrMoreTimes(int index, Parser.Unit unit, int astIndex)
     {
-        for (var repeatCount = 0; repeatCount < 50; repeatCount++)
+        var maxRepeatCount = source.Length + 1;
+        for (var repeatCount = 0; repeatCount < maxRepeatCount; repeatCount++)
         {
-            Console.WriteLine($"{repeatCount} {unit}");
             var startIndex = index;
 
             for (var i = 0; i < repeatCount; i++)
-                if (TryInterpretChildren(index, unit, astIndex, out var zeroOrMoreTimes1))
-                    index = zeroOrMoreTimes1.Index;
+            {
+                var r = TryInterpretChildren(index, unit, astIndex);
+                if (r.Success)
+                    index = r.Index;
                 else goto doubleContinue;
+            }
 
             var result = InterpretNext(astIndex + 1, index);
             if (result.Success) return new Result(result.Index, true, true);
@@ -82,35 +82,32 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
         return new Result(index, false);
     }
 
-    private bool TryInterpretChildren(int index, Parser.Unit unit, int astIndex, out Result zeroOrMoreTimes1)
+    private Result TryInterpretChildren(int index, Parser.Unit unit, int astIndex)
     {
         foreach (var child in unit.Children)
         {
-            if (index <= -1)
-            {
-                zeroOrMoreTimes1 = new Result(-1, false);
-                return false;
-            }
+            if (index <= -1) return new Result(-1, false);
 
             var tempResult = SingleInterpret(index, child, astIndex);
             if (!tempResult.Success)
-            {
-                zeroOrMoreTimes1 = tempResult;
-                return false;
-            }
+                return tempResult;
 
             index = tempResult.Index;
         }
 
-        zeroOrMoreTimes1 = new Result(index, true);
-        return true;
+        return new Result(index, true);
     }
 
-    private Result Text(int index, Parser.Unit unit) =>
-        new(index - unit.Lexeme.Text.Length, source[..(index + 1)].EndsWith(unit.Lexeme.Text));
+    private Result Char(int index, Parser.Unit unit) =>
+        new(index - 1, source[index] == unit.Lexeme.Text[0]);
 
     private Result AnyChar(int index) =>
         new(index - 1, index >= 0);
 
-    private sealed record Result(int Index, bool Success, bool EndOfInterpretation = false);
+    private readonly ref struct Result(int index, bool success, bool endOfInterpretation = false)
+    {
+        public readonly int Index = index;
+        public readonly bool Success = success;
+        public readonly bool EndOfInterpretation = endOfInterpretation;
+    }
 }

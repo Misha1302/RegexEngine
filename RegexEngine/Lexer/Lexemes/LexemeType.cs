@@ -9,7 +9,7 @@ public enum LexemeType
     AnyDigit,
     LeftCurlyBrace,
     RightCurlyBrace,
-    Text,
+    Char,
     AnyWordChar,
     StartOfInnerScope,
     EndOfInnerScope

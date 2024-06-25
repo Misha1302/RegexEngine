@@ -1,5 +1,18 @@
-﻿using RegexEngine;
+﻿using System.Diagnostics;
+using RegexEngine;
 
-const string source = "caccccaccbabbcb";
-var len = new Regex().DebugMatch(source, @"(c*c)*b*a*.*c*.a*a*a*").Len;
-Console.WriteLine(len == source.Length);
+for (var i = 0; i < 5; i++)
+    Console.WriteLine(Main());
+
+
+var sw = Stopwatch.StartNew();
+for (var i = 0; i < 1000; i++)
+    _ = Main();
+Console.WriteLine(sw.ElapsedMilliseconds);
+
+bool Main()
+{
+    const string s = "caccccaccbabbcb";
+    var len1 = new Regex().Match(s, @"(c*c)*b*a*.*c*.a*a*a*").Len;
+    return len1 == s.Length;
+}

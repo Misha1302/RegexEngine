@@ -28,7 +28,7 @@ public class Lexer(string source)
         var startPos = _position;
         while (NotEnd && _lexemeTexts.All(x => !Slice.StartsWith(x.key)))
         {
-            _lexemes.Add(new Lexeme(source[_position..(_position + 1)], LexemeType.Text));
+            _lexemes.Add(new Lexeme(source[_position..(_position + 1)], LexemeType.Char));
             _position++;
         }
 
