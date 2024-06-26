@@ -100,10 +100,5 @@ public class Interpreter(string source, IReadOnlyList<Parser.Unit> ast)
     private Result AnyChar(int index) =>
         new(index - 1, index >= 0);
 
-    public readonly ref struct Result(int index, bool success, bool endOfInterpretation = false)
-    {
-        public readonly int Index = index;
-        public readonly bool Success = success;
-        public readonly bool EndOfInterpretation = endOfInterpretation;
-    }
+    public record Result(int Index, bool Success, bool EndOfInterpretation = false);
 }

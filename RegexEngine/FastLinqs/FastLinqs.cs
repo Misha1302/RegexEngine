@@ -13,14 +13,10 @@ public static class FastLinqs
 
     public static bool FastStartsWith(this string a, string b, int offset)
     {
-        if (a.Length - offset < b.Length)
-            return false;
+        var s1 = a.AsSpan(offset);
+        var s2 = b.AsSpan();
 
-        for (var i = 0; i < b.Length; i++)
-            if (a[i + offset] != b[i])
-                return false;
-
-        return true;
+        return s1.CommonPrefixLength(s2) == s2.Length;
     }
 
     public static T? FastFirstOrDefault<T>(this List<T> list, Func<T, bool> predicate)
